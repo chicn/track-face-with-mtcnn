@@ -1,12 +1,17 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
-
 #include "mtcnn/mtcnn.h"
+//#include <dlib/image_processing/render_face_detections.h>
+//#include <dlib/image_processing.h>
 
 
 using namespace cv;
 using namespace std;
+
+//static dlib::rectangle openCVRectToDlib(cv::Rect r) {
+//    return dlib::rectangle((long)r.tl().x, (long)r.tl().y, (long)r.br().x - 1, (long)r.br().y - 1);
+//}
 
 int main(int argc, char **argv)
 {
@@ -43,12 +48,18 @@ int main(int argc, char **argv)
 
         video >> frame;
 
-        if (faceDetector.getFaceBoxes().empty() || count % 10 == 0) {
+        if (faceDetector.getFaceBoxes().empty() || count % 5 == 0) {
+            trackers.clear();
             faceDetector.findFace(frame);
             bbox = faceDetector.getFaceBoxes();
+            int face_count = 0;
             for (const auto& b: bbox) {
                 cv::rectangle(frame, b, Scalar(0,0,255), 2,8,0);
+                trackers.push_back(Tracker::create("KCF"));
+                trackers[face_count]->init(frame, b);
+                face_count++;
             }
+
         }
         else {
             int face_count = 0;

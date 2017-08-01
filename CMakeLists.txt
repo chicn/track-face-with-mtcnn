@@ -17,3 +17,6 @@ add_executable(tracker ${SOURCE_FILES})
 
 target_link_libraries(tracker ${OpenCV_LIBS})
 target_link_libraries(tracker openblas)
+
+find_package(dlib)
+target_link_libraries(tracker dlib::dlib)
