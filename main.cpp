@@ -54,7 +54,7 @@ int main(int argc, char **argv)
             bbox = faceDetector.getFaceBoxes();
             int face_count = 0;
             for (const auto& b: bbox) {
-                cv::rectangle(frame, b, Scalar(0,0,255), 2,8,0);
+                cv::rectangle(frame, b, Scalar(255,127,255), 2,8,0);
                 trackers.push_back(Tracker::create("KCF"));
                 trackers[face_count]->init(frame, b);
                 face_count++;
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
             int face_count = 0;
             for (auto& b: bbox) {
                 bool ok = trackers[face_count]->update(frame, b);
-                rectangle(frame, b, Scalar( 255, 0, 0 ), 2, 1 );
+                rectangle(frame, b, Scalar(163,209,255), 2, 1 );
                 face_count++;
             }
         }
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         }
         for (const auto& shape : shapes) {
             for (int i = 0; i < shape.num_parts(); i++) {
-                cv::circle(frame, cv::Point(shape.part(i).x(), shape.part(i).y()), 3, cv::Scalar(50,0,0), -1);
+                cv::circle(frame, cv::Point(shape.part(i).x(), shape.part(i).y()), 3, cv::Scalar(127,191.255), -1);
             }
         }
         imshow("result", frame);
