@@ -4,20 +4,23 @@
 #include "mtcnn/mtcnn.h"
 #include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
+#include <dlib/opencv.h>
 
 
 using namespace cv;
 using namespace std;
 
-//static dlib::rectangle openCVRectToDlib(cv::Rect r) {
-//    return dlib::rectangle((long)r.tl().x, (long)r.tl().y, (long)r.br().x - 1, (long)r.br().y - 1);
-//}
+static dlib::rectangle openCVRectToDlib(cv::Rect r) {
+    return dlib::rectangle((long)r.tl().x, (long)r.tl().y, (long)r.br().x - 1, (long)r.br().y - 1);
+}
 
 int main(int argc, char **argv)
 {
 
     dlib::shape_predictor pose_model;
     dlib::deserialize("lib/shape_predictor_68_face_landmarks.dat") >> pose_model;
+    std::vector<dlib::rectangle> dlibFaces;
+    std::vector<dlib::full_object_detection> shapes;
 
     // "BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"
     std::vector<Ptr<Tracker>> trackers;
@@ -74,7 +77,23 @@ int main(int argc, char **argv)
             }
         }
 
+        dlib::cv_image<dlib::bgr_pixel>  cimg(frame);
+        for (const auto& b : bbox) {
+            dlibFaces.push_back(openCVRectToDlib(b));
+        }
+        for (const auto& b : dlibFaces) {
+            shapes.push_back(pose_model(cimg, b));
+        }
+
+        for (const auto& shape : shapes) {
+            for (int i = 0; i < shape.num_parts(); i++) {
+                cv::circle(frame, cv::Point(shape.part(i).x(), shape.part(i).y()), 3, cv::Scalar(50,0,0), -1);
+            }
+        }
+
         imshow("result", frame);
+        shapes.clear();
+        dlibFaces.clear();
         int k = waitKey(1);
         if(k == 27)
         {
