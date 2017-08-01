@@ -3,6 +3,8 @@ project(facetracker)
 
 set(CMAKE_CXX_STANDARD 14)
 
+file(COPY shape_predictor_68_face_landmarks.dat DESTINATION ${PROJECT_BINARY_DIR}/lib)
+
 # OpenBLAS
 include_directories(/usr/local/Cellar/openblas/0.2.20/include)
 link_directories(/usr/local/Cellar/openblas/0.2.20/lib)

@@ -2,8 +2,8 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
 #include "mtcnn/mtcnn.h"
-//#include <dlib/image_processing/render_face_detections.h>
-//#include <dlib/image_processing.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
 
 
 using namespace cv;
@@ -15,6 +15,10 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+
+    dlib::shape_predictor pose_model;
+    dlib::deserialize("lib/shape_predictor_68_face_landmarks.dat") >> pose_model;
+
     // "BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"
     std::vector<Ptr<Tracker>> trackers;
 
