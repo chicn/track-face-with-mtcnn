@@ -22,33 +22,26 @@ int main(int argc, char **argv)
     std::vector<dlib::rectangle> dlibFaces;
     std::vector<dlib::full_object_detection> shapes;
 
-    // "BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"
     std::vector<Ptr<Tracker>> trackers;
 
-    // Read video
     VideoCapture video(0);
 
-    // Exit if video is not opened
     if(!video.isOpened()) return 1;
 
-    // Read first frame
     Mat frame;
     bool ok = video.read(frame);
 
     mtcnn faceDetector(frame.rows, frame.cols);
 
     faceDetector.findFace(frame);
-    // Rect2d bbox = faceDetector.getFaceBoxes()[0];
     std::vector<cv::Rect2d> bbox = faceDetector.getFaceBoxes();
     int face_count = 0;
     for (const auto& b: bbox) {
         rectangle(frame, b, Scalar( 255, 0, 0 ), 2, 1 );
-        trackers.push_back(Tracker::create("KCF"));
+        trackers.push_back(Tracker::create("KCF")); // "BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"
         trackers[face_count]->init(frame, b);
         face_count++;
     }
-
-    // tracker->init(frame, bbox);
 
     int count = 0;
     for(;;) {
@@ -84,13 +77,11 @@ int main(int argc, char **argv)
         for (const auto& b : dlibFaces) {
             shapes.push_back(pose_model(cimg, b));
         }
-
         for (const auto& shape : shapes) {
             for (int i = 0; i < shape.num_parts(); i++) {
                 cv::circle(frame, cv::Point(shape.part(i).x(), shape.part(i).y()), 3, cv::Scalar(50,0,0), -1);
             }
         }
-
         imshow("result", frame);
         shapes.clear();
         dlibFaces.clear();
