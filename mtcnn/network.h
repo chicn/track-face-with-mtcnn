@@ -10,7 +10,8 @@
 #include <memory.h>
 #include <fstream>
 #include <cstring>
-#include <cblas.h>
+//#include <cblas.h>
+#include "/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers/cblas.h"
 #include <string>
 #include <math.h>
 #include "pBox.h"
